@@ -1,6 +1,6 @@
 import React from 'react';
-
 import PropTypes from 'prop-types';
+
 import TasksFilter from '../TasksFilter/TasksFilter';
 
 const Footer = ({ notCompletedTask, filterData, onChangeActiveFilter, deletedCompletedTask }) => {

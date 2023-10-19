@@ -1,8 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Task from '../Task/Task';
-
-import PropTypes from 'prop-types';
 
 const TaskList = ({ taskData, onChangeActiveTask, onDeleteTask, activeFilter, editingTask, onChangeEditing }) => {
   const filterTasks = taskData.filter((item) => {
