@@ -1,60 +1,54 @@
 import { formatDistanceToNow } from 'date-fns';
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-export default class Task extends Component {
-  static defaultProps = {
-    onChangeActiveTask: () => {
-      return alert('To add a new task, pass the function');
-    },
-    onDeleteTask: () => {
-      return alert('To add a new task, pass the function');
-    },
+const Task = ({ taskProps, onChangeActiveTask, onDeleteTask, onChangeEditing, editingTask, id }) => {
+  const [value, setValue] = useState(taskProps.description);
+  const { description, created } = taskProps;
+
+  const onInputChange = (e) => {
+    setValue(e.target.value);
   };
 
-  static propTypes = {
-    taskProps: PropTypes.object,
-    onChangeActiveTask: PropTypes.func,
-    onDeleteTask: PropTypes.func,
-    editingTask: PropTypes.func,
-    id: PropTypes.number,
-    onChangeEditing: PropTypes.func,
-  };
-
-  state = {
-    value: this.props.taskProps.description,
-  };
-
-  onInputChange = (e) => {
-    this.setState({
-      value: e.target.value,
-    });
-  };
-
-  onSubmit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
-    this.props.editingTask(this.props.id, this.state.value);
+    editingTask(id, value);
   };
 
-  render() {
-    const { taskProps, onChangeActiveTask, onDeleteTask, onChangeEditing } = this.props;
-    const { description, created } = taskProps;
+  return (
+    <>
+      <div className="view">
+        <input onClick={onChangeActiveTask} className="toggle" type="checkbox" />
+        <label>
+          <span className="description">{description}</span>
+          <span className="created">{formatDistanceToNow(created, { includeSeconds: true })}</span>
+        </label>
+        <button onClick={onChangeEditing} className="icon icon-edit"></button>
+        <button onClick={onDeleteTask} className="icon icon-destroy"></button>
+      </div>
+      <form onSubmit={onSubmit}>
+        <input type="text" className="edit" onChange={onInputChange} value={value} />
+      </form>
+    </>
+  );
+};
 
-    return (
-      <>
-        <div className="view">
-          <input onClick={onChangeActiveTask} className="toggle" type="checkbox" />
-          <label>
-            <span className="description">{description}</span>
-            <span className="created">{formatDistanceToNow(created, { includeSeconds: true })}</span>
-          </label>
-          <button onClick={onChangeEditing} className="icon icon-edit"></button>
-          <button onClick={onDeleteTask} className="icon icon-destroy"></button>
-        </div>
-        <form onSubmit={this.onSubmit}>
-          <input type="text" className="edit" onChange={this.onInputChange} value={this.state.value} />
-        </form>
-      </>
-    );
-  }
-}
+Task.defaultProps = {
+  onChangeActiveTask: () => {
+    return alert('To add a new task, pass the function');
+  },
+  onDeleteTask: () => {
+    return alert('To add a new task, pass the function');
+  },
+};
+
+Task.propTypes = {
+  taskProps: PropTypes.object,
+  onChangeActiveTask: PropTypes.func,
+  onDeleteTask: PropTypes.func,
+  editingTask: PropTypes.func,
+  id: PropTypes.number,
+  onChangeEditing: PropTypes.func,
+};
+
+export default Task;
