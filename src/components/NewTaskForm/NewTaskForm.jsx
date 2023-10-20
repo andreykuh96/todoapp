@@ -1,49 +1,43 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-export default class NewTaskForm extends Component {
-  state = {
-    textInput: '',
+const NewTaskForm = ({ addItem }) => {
+  const [textInput, setTextInput] = useState('');
+
+  const onInputChange = (e) => {
+    setTextInput(e.target.value);
   };
 
-  static defaultProps = {
-    addItem: () => {
-      return alert('To add a new task, pass the function');
-    },
-  };
-
-  static propTypes = {
-    addItem: PropTypes.func,
-  };
-
-  onInputChange = (e) => {
-    this.setState({
-      textInput: e.target.value,
-    });
-  };
-
-  onSubmit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
 
-    if (this.state.textInput !== '') {
-      this.props.addItem(this.state.textInput);
-      this.setState({
-        textInput: '',
-      });
+    if (textInput !== '') {
+      addItem(textInput);
+      setTextInput('');
     }
   };
 
-  render() {
-    return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          onChange={this.onInputChange}
-          className="new-todo"
-          placeholder="What needs to be done?"
-          autoFocus
-          value={this.state.textInput}
-        />
-      </form>
-    );
-  }
-}
+  return (
+    <form onSubmit={onSubmit}>
+      <input
+        onChange={onInputChange}
+        className="new-todo"
+        placeholder="What needs to be done?"
+        autoFocus
+        value={textInput}
+      />
+    </form>
+  );
+};
+
+NewTaskForm.defaultProps = {
+  addItem: () => {
+    return alert('To add a new task, pass the function');
+  },
+};
+
+NewTaskForm.propTypes = {
+  addItem: PropTypes.func,
+};
+
+export default NewTaskForm;
