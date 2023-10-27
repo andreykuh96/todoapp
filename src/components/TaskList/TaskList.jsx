@@ -3,7 +3,17 @@ import PropTypes from 'prop-types';
 
 import Task from '../Task/Task';
 
-const TaskList = ({ taskData, onChangeActiveTask, onDeleteTask, activeFilter, editingTask, onChangeEditing }) => {
+const TaskList = ({
+  taskData,
+  onChangeActiveTask,
+  onDeleteTask,
+  activeFilter,
+  editingTask,
+  onChangeEditing,
+  tick,
+  onStopTimer,
+  onStartTimer,
+}) => {
   const filterTasks = taskData.filter((item) => {
     if (activeFilter === 1) return true;
     if (activeFilter === 2) return !item.completed;
@@ -26,6 +36,10 @@ const TaskList = ({ taskData, onChangeActiveTask, onDeleteTask, activeFilter, ed
     return (
       <li key={id} className={classNames}>
         <Task
+          onStopTimer={() => onStopTimer(id)}
+          onStartTimer={() => onStartTimer(id)}
+          tick={() => tick(id)}
+          taskData={taskData}
           id={id}
           editingTask={editingTask}
           onDeleteTask={() => onDeleteTask(id)}
