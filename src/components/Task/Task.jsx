@@ -25,6 +25,14 @@ export default class Task extends Component {
     value: this.props.taskProps.description,
   };
 
+  componentDidMount() {
+    this.timerID = setInterval(() => this.props.tick(), 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerID);
+  }
+
   onInputChange = (e) => {
     this.setState({
       value: e.target.value,
@@ -38,15 +46,21 @@ export default class Task extends Component {
 
   render() {
     const { taskProps, onChangeActiveTask, onDeleteTask, onChangeEditing } = this.props;
-    const { description, created } = taskProps;
-
+    const { description, created, time } = taskProps;
+    const minutes = Math.floor(time / 1000 / 60);
+    const seconds = (time / 1000) % 60;
     return (
       <>
         <div className="view">
           <input onClick={onChangeActiveTask} className="toggle" type="checkbox" />
           <label>
-            <span className="description">{description}</span>
-            <span className="created">{formatDistanceToNow(created, { includeSeconds: true })}</span>
+            <span className="title">{description}</span>
+            <span className="description">
+              <button onClick={this.props.onStartTimer} className="icon icon-play"></button>
+              <button onClick={this.props.onStopTimer} className="icon icon-pause"></button>
+              {minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10 ? `0${seconds}` : seconds}
+            </span>
+            <span className="description">{formatDistanceToNow(created, { includeSeconds: true })}</span>
           </label>
           <button onClick={onChangeEditing} className="icon icon-edit"></button>
           <button onClick={onDeleteTask} className="icon icon-destroy"></button>

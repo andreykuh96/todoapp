@@ -14,6 +14,8 @@ export default class App extends Component {
         id: 1,
         completed: false,
         editing: false,
+        time: 10000,
+        isRunning: true,
       },
       {
         description: 'Learn CSS',
@@ -21,13 +23,8 @@ export default class App extends Component {
         id: 2,
         completed: false,
         editing: false,
-      },
-      {
-        description: 'Learn JS',
-        created: Date.now(),
-        id: 3,
-        completed: false,
-        editing: false,
+        time: 20000,
+        isRunning: true,
       },
     ],
     filterData: [
@@ -37,15 +34,36 @@ export default class App extends Component {
     ],
   };
 
-  onChangeActiveFilter = (id) => {
-    this.setState(({ filterData }) => {
-      const newData = filterData.map((el) => ({
-        ...el,
-        active: el.id === id,
-      }));
+  tick = (taskId) => {
+    this.setState((prevState) => ({
+      taskData: prevState.taskData.map((task) =>
+        task.id === taskId && task.time > 0 && task.isRunning ? { ...task, time: task.time - 1000 } : task
+      ),
+    }));
+  };
 
+  onStopTimer = (taskId) => {
+    this.setState((prevState) => ({
+      taskData: prevState.taskData.map((task) => (task.id === taskId ? { ...task, isRunning: false } : task)),
+    }));
+  };
+
+  onStartTimer = (taskId) => {
+    this.setState((prevState) => ({
+      taskData: prevState.taskData.map((task) => (task.id === taskId ? { ...task, isRunning: true } : task)),
+    }));
+  };
+
+  onChangeActiveFilter = (id) => {
+    this.setState((prevFilterData) => {
       return {
-        filterData: newData,
+        ...prevFilterData,
+        filterData: prevFilterData.filterData.filter((item) => {
+          return {
+            ...item,
+            active: item.id === id ? (item.active = true) : (item.active = false),
+          };
+        }),
       };
     });
     this.setState({
@@ -79,13 +97,15 @@ export default class App extends Component {
     });
   };
 
-  addItem = (text) => {
+  addItem = (text, time) => {
     const newItem = {
       description: text,
       created: Date.now(),
       id: Date.now(),
       completed: false,
       editing: false,
+      time: time,
+      isRunning: true,
     };
 
     this.setState(({ taskData }) => {
@@ -143,9 +163,12 @@ export default class App extends Component {
         </header>
         <section className="main">
           <TaskList
+            onStopTimer={this.onStopTimer}
+            onStartTimer={this.onStartTimer}
+            tick={this.tick}
+            activeFilter={activeFilter}
             onChangeEditing={this.onChangeEditing}
             editingTask={this.editingTask}
-            activeFilter={activeFilter}
             onDeleteTask={this.onDeleteTask}
             onChangeActiveTask={this.onChangeActiveTask}
             taskData={taskData}
